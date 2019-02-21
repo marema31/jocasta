@@ -1,6 +1,6 @@
 package config
 
-// Outfile return the filename for stdout logs
+// OutFile return the filename for stdout logs
 func (c *Config) OutFile() string {
 	return c.v.GetString("out_file")
 }

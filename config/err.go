@@ -1,6 +1,6 @@
 package config
 
-// Errfile return the filename for stdErr logs
+// ErrFile return the filename for stdErr logs
 func (c *Config) ErrFile() string {
 	return c.v.GetString("err_file")
 }
