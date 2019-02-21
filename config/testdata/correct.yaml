@@ -1,0 +1,6 @@
+out_file: /tmp/correct.log
+out_maxsize: 1MB
+out_backups: 2
+err_file: /tmp/correct_err.log
+err_maxsize: 2MB
+err_backups: 3
