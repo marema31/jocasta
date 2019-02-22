@@ -2,6 +2,7 @@ package logwriter
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 
 	"github.com/marema31/jocasta/config"
@@ -31,7 +32,7 @@ func New(stream string, c *config.Config) (*LogWriter, error) {
 		currentsize: 0,
 		file:        f,
 	}
-
+	fmt.Printf("Will log std%s on %s with limit:%d and backups:%d\n", stream, p.File, p.Maxsize, p.Backups)
 	return l, nil
 }
 
