@@ -171,6 +171,19 @@ func TestParams(t *testing.T) {
 		t.Errorf("Retrieved value for err.file is not correct, should be %s and I receive %s", defaultFile, p.File)
 	}
 }
+
+func TestPIncorrectStreamParams(t *testing.T) {
+	c, err := New("testdata", "correct", "dummy")
+	if err != nil {
+		t.Errorf("Can not read the configuration file. err=%v", err)
+	}
+
+	_, err = c.GetParams("dummy")
+	if err == nil {
+		t.Errorf("Should not be able to retrieve params for dummy.")
+	}
+
+}
 func TestEnv(t *testing.T) {
 
 	str := "dummy.log"
@@ -187,7 +200,30 @@ func TestEnv(t *testing.T) {
 		t.Errorf("Error while retrieving out_file. err=%v", err)
 	}
 	if file != str {
-		t.Errorf("Not able to retrieve out.file from environment variable . Found=%s for '%s'", file, str)
+		t.Errorf("Not able to retrieve out_file from environment variable . Found=%s for '%s'", file, str)
+	}
+
+}
+
+func TestIncorrectTemplateInFile(t *testing.T) {
+
+	str := "dummy{{.toto}}.log"
+
+	os.Setenv("JOCASTA_OUT_FILE", str)
+
+	c, err := New("testdata", "empty", "dummy")
+	if err != nil {
+		t.Errorf("Can not read the configuration file. err=%v", err)
+	}
+
+	_, err = c.File("out")
+	if err == nil {
+		t.Errorf("Should not be able to parse the template")
+	}
+
+	_, err = c.GetParams("out")
+	if err == nil {
+		t.Errorf("Should not be able to parse the template")
 	}
 
 }

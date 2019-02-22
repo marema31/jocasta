@@ -104,10 +104,9 @@ func (c *Config) GetParams(stream string) (*Params, error) {
 	if err != nil {
 		return nil, err
 	}
-	backups, err := c.Backups(stream)
-	if err != nil {
-		return nil, err
-	}
+
+	// The errors are already trapped at c.MaxSize
+	backups, _ := c.Backups(stream)
 
 	file, err := c.File(stream)
 	if err != nil {
