@@ -53,7 +53,7 @@ func keyName(key, subkey string) (string, error) {
 	case "out", "err":
 		return fmt.Sprintf("%s_%s", key, subkey), nil
 	default:
-		return "", fmt.Errorf("Don't know anything about %s", key)
+		return "", fmt.Errorf("don't know anything about %s", key)
 	}
 
 }
