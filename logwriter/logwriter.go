@@ -14,7 +14,7 @@ type LogWriter struct {
 	file        *os.File
 }
 
-// New instanciate a LogSaver object
+// New instanciate a LogWriter object
 func New(stream string, c *config.Config) (*LogWriter, error) {
 	p, err := c.GetParams(stream)
 	if err != nil {
@@ -35,6 +35,8 @@ func New(stream string, c *config.Config) (*LogWriter, error) {
 	return l, nil
 }
 
+// Write implements the io.Writer interface
+// Read the buffer line by line and save it to the file opened in New
 func (l *LogWriter) Write(p []byte) (int, error) {
 
 	n := 0
@@ -53,6 +55,8 @@ func (l *LogWriter) Write(p []byte) (int, error) {
 	return n, nil
 }
 
+// Close implements the io.Writer interface
+// Close the file opened in New
 func (l *LogWriter) Close() error {
 	return l.file.Close()
 }

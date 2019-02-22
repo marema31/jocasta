@@ -19,6 +19,9 @@ func main() {
 	}
 
 	config, err := config.New(".", "jocasta", os.Args[1])
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	cmd := exec.Command(os.Args[1], os.Args[2:]...)
 
