@@ -7,7 +7,7 @@ import (
 	"github.com/marema31/jocasta/config"
 )
 
-// LogSaver object used to save log to a file with limits and automatic rotation
+// LogWriter object used to save log to a file with limits and automatic rotation
 type LogWriter struct {
 	params      *config.Params
 	currentsize int
