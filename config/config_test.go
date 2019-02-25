@@ -147,7 +147,7 @@ func TestErrFromFile(t *testing.T) {
 
 func TestParams(t *testing.T) {
 	defaultFile := "/tmp/correct_err.log"
-	var defaultSize uint = 2 * 1024 * 1024
+	defaultSize := 2 * 1024 * 1024
 	defaultBackups := 3
 
 	c, err := New("testdata", "correct", "dummy")

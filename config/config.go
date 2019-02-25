@@ -27,7 +27,7 @@ type Config struct {
 // Params type for characteristics of a stream
 type Params struct {
 	File    string
-	Maxsize uint
+	Maxsize int
 	Backups int
 }
 
@@ -113,7 +113,7 @@ func (c *Config) GetParams(stream string) (*Params, error) {
 		return nil, err
 	}
 	p := &Params{
-		Maxsize: maxsize,
+		Maxsize: int(maxsize),
 		Backups: backups,
 		File:    file,
 	}
