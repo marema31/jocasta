@@ -10,6 +10,39 @@ import (
 	"github.com/marema31/jocasta/config"
 )
 
+func TestObjectCreation(t *testing.T) {
+	c, err := config.New("testdata", "empty", "dummy")
+	if err != nil {
+		t.Errorf("Can not read the configuration file. err=%v", err)
+	}
+
+	os.Setenv("JOCASTA_ERR_FILE", "testdata/test.log")
+	l, err := New("err", c)
+	if err != nil {
+		t.Errorf("Can not open the logWriter. err=%v", err)
+	}
+
+	l.file.Close()
+	// Verify the file content
+	if _, err := os.Stat("testdata/test.log"); os.IsNotExist(err) {
+		t.Errorf("The log file has not be created.")
+	}
+	clean()
+}
+
+func TestOIncorrectbjectCreation(t *testing.T) {
+	c, err := config.New("testdata", "empty", "dummy")
+	if err != nil {
+		t.Errorf("Can not read the configuration file. err=%v", err)
+	}
+
+	_, err = New("dummy", c)
+	if err == nil {
+		t.Errorf("Should not be able to create object")
+	}
+
+}
+
 func TestWriteWithoutRotation(t *testing.T) {
 	f, err := os.Create("testdata/test.log")
 	if err != nil {
@@ -38,7 +71,7 @@ func TestWriteWithoutRotation(t *testing.T) {
 		t.Errorf("Can read log file. err=%v", err)
 	}
 	if !bytes.Equal(b, []byte("12\n34\n56\n78\n90\nab\ncd\n")) {
-		t.Errorf("The content of log file not correct. b=%v", b)
+		t.Errorf("The content of log file not correct. b=%v", string(b))
 	}
 	clean()
 }
@@ -71,7 +104,7 @@ func TestWriteWithRotation(t *testing.T) {
 		t.Errorf("Can read first log file. err=%v", err)
 	}
 	if !bytes.Equal(b, []byte("cd\n")) {
-		t.Errorf("The content of log file not correct. b=%v", b)
+		t.Errorf("The content of log file not correct. b=%v", string(b))
 	}
 	// Verify the file content
 	b, err = ioutil.ReadFile("testdata/test.log.1")
@@ -79,7 +112,7 @@ func TestWriteWithRotation(t *testing.T) {
 		t.Errorf("Can read first backup log file. err=%v", err)
 	}
 	if !bytes.Equal(b, []byte("90\nab\n")) {
-		t.Errorf("The content of first backup log file not correct. b=%v", b)
+		t.Errorf("The content of first backup log file not correct. b=%v", string(b))
 	}
 
 	// Verify the file content
@@ -88,7 +121,7 @@ func TestWriteWithRotation(t *testing.T) {
 		t.Errorf("Can read second backup log file. err=%v", err)
 	}
 	if !bytes.Equal(b, []byte("56\n78\n")) {
-		t.Errorf("The content of second backup log file not correct. b=%v", b)
+		t.Errorf("The content of second backup log file not correct. b=%v", string(b))
 	}
 
 	// Verify the file content
@@ -107,19 +140,19 @@ func writeTestData(l *LogWriter) error {
 		return fmt.Errorf("Wrong number of byte written for first line. n=%d", n)
 	}
 
-	n, err = l.Write([]byte("34\n56\n"))
+	n, err = l.Write([]byte("34\n56"))
 	if err != nil {
 		return fmt.Errorf("Can not write the second and third lines. err=%v", err)
 	}
-	if n != 6 {
+	if n != 5 {
 		return fmt.Errorf("Wrong number of byte written for second and third lines. n=%d", n)
 	}
 
-	n, err = l.Write([]byte("78\n90\nab\ncd\n"))
+	n, err = l.Write([]byte("\n78\n90\nab\ncd\n"))
 	if err != nil {
 		return fmt.Errorf("Can not write the remaining lines. err=%v", err)
 	}
-	if n != 12 {
+	if n != 13 {
 		return fmt.Errorf("Wrong number of byte written for remaining lines. n=%d", n)
 	}
 

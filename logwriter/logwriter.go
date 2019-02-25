@@ -12,6 +12,7 @@ import (
 type LogWriter struct {
 	params      *config.Params
 	currentsize int
+	last        byte
 	file        *os.File
 }
 
@@ -30,6 +31,7 @@ func New(stream string, c *config.Config) (*LogWriter, error) {
 	l := &LogWriter{
 		params:      p,
 		currentsize: 0,
+		last:        0,
 		file:        f,
 	}
 	fmt.Printf("Will log std%s on %s with limit:%d and backups:%d\n", stream, p.File, p.Maxsize, p.Backups)
@@ -44,7 +46,8 @@ func (l *LogWriter) Write(p []byte) (int, error) {
 	for n < len(p) {
 
 		// Manage the limitation
-		if l.params.Backups > 0 && l.currentsize > l.params.Maxsize {
+		// 10 = \n in byte
+		if l.params.Backups > 0 && l.currentsize >= l.params.Maxsize && !(n == 0 && l.last != 10) {
 			err := l.rotation()
 			if err != nil {
 				return n, err
@@ -67,6 +70,7 @@ func (l *LogWriter) Write(p []byte) (int, error) {
 		}
 
 	}
+	l.last = p[len(p)-1]
 	return n, nil
 }
 
