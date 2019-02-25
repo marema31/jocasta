@@ -104,37 +104,25 @@ func writeTestData(l *LogWriter) error {
 		return fmt.Errorf("Can not write the first line. err=%v", err)
 	}
 	if n != 3 {
-		return fmt.Errorf("Wrong number of byte written. n=%d", n)
+		return fmt.Errorf("Wrong number of byte written for first line. n=%d", n)
 	}
 
-	n, err = l.Write([]byte("34\n"))
+	n, err = l.Write([]byte("34\n56\n"))
 	if err != nil {
-		return fmt.Errorf("Can not write the second line. err=%v", err)
+		return fmt.Errorf("Can not write the second and third lines. err=%v", err)
+	}
+	if n != 6 {
+		return fmt.Errorf("Wrong number of byte written for second and third lines. n=%d", n)
 	}
 
-	n, err = l.Write([]byte("56\n"))
+	n, err = l.Write([]byte("78\n90\nab\ncd\n"))
 	if err != nil {
-		return fmt.Errorf("Can not write the third line. err=%v", err)
+		return fmt.Errorf("Can not write the remaining lines. err=%v", err)
+	}
+	if n != 12 {
+		return fmt.Errorf("Wrong number of byte written for remaining lines. n=%d", n)
 	}
 
-	n, err = l.Write([]byte("78\n"))
-	if err != nil {
-		return fmt.Errorf("Can not write the fourth line. err=%v", err)
-	}
-
-	n, err = l.Write([]byte("90\n"))
-	if err != nil {
-		return fmt.Errorf("Can not write the fifth line. err=%v", err)
-	}
-
-	n, err = l.Write([]byte("ab\n"))
-	if err != nil {
-		return fmt.Errorf("Can not write the sixth line. err=%v", err)
-	}
-	n, err = l.Write([]byte("cd\n"))
-	if err != nil {
-		return fmt.Errorf("Can not write the seventh line. err=%v", err)
-	}
 	return nil
 }
 
