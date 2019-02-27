@@ -12,6 +12,7 @@ import (
 type LogWriter struct {
 	params      *config.Params
 	currentsize int
+	last        byte
 	file        *os.File
 }
 
@@ -30,6 +31,7 @@ func New(stream string, c *config.Config) (*LogWriter, error) {
 	l := &LogWriter{
 		params:      p,
 		currentsize: 0,
+		last:        0,
 		file:        f,
 	}
 	fmt.Printf("Will log std%s on %s with limit:%d and backups:%d\n", stream, p.File, p.Maxsize, p.Backups)
@@ -42,6 +44,20 @@ func (l *LogWriter) Write(p []byte) (int, error) {
 
 	n := 0
 	for n < len(p) {
+
+		// Manage the limitation
+		// 10 = \n in byte
+		if l.params.Backups > 0 && l.currentsize >= l.params.Maxsize && !(n == 0 && l.last != 10) {
+			err := l.rotation()
+			if err != nil {
+				return n, err
+			}
+			l.currentsize = 0
+		} else if l.params.Backups < 1 {
+			l.currentsize = 0
+		}
+
+		// Write line by line
 		i := bytes.IndexByte(p[n:], byte('\n'))
 		if i == -1 {
 			l.file.Write(p[n:])
@@ -52,7 +68,9 @@ func (l *LogWriter) Write(p []byte) (int, error) {
 			n += i + 1
 			l.currentsize += i + 1
 		}
+
 	}
+	l.last = p[len(p)-1]
 	return n, nil
 }
 
@@ -60,4 +78,32 @@ func (l *LogWriter) Write(p []byte) (int, error) {
 // Close the file opened in New
 func (l *LogWriter) Close() error {
 	return l.file.Close()
+}
+
+func (l *LogWriter) rotation() error {
+	err := l.file.Close()
+	if err != nil {
+		return err
+	}
+
+	for copy := l.params.Backups - 1; copy > 0; copy-- {
+		src := fmt.Sprintf("%s.%d", l.params.File, copy)
+		dst := fmt.Sprintf("%s.%d", l.params.File, copy+1)
+		if _, err := os.Stat(src); err == nil {
+			os.Rename(src, dst)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	err = os.Rename(l.params.File, l.params.File+".1")
+	if err != nil {
+		return err
+	}
+
+	l.file, err = os.Create(l.params.File)
+	if err != nil {
+		return err
+	}
+	return nil
 }

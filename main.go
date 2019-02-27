@@ -39,7 +39,7 @@ func main() {
 	}
 
 	fmt.Printf("Will run %s\n", strings.Join(os.Args[i:], " "))
-	cmd := exec.Command(os.Args[1], os.Args[2:]...)
+	cmd := exec.Command(os.Args[i], os.Args[i+1:]...)
 
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
