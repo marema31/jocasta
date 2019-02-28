@@ -77,7 +77,7 @@ func main() {
 
 	err = cmd.Wait()
 	if err != nil {
-		log.Fatalf("Unable to exec %s: %s\n", os.Args[1], err)
+		log.Fatalf("Unable to exec %s: %s\n", os.Args[i], err)
 	}
 }
 
