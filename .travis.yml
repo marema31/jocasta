@@ -28,8 +28,7 @@ script:
   - staticcheck ./...                          # "go vet on steroids" + linter
   - gocyclo -over 19 $GO_FILES               # forbid code with huge functions
   - golint -set_exit_status $(go list ./...) # one last linter
-  - if [ "${LATEST}" = "true" ]; then gox -os="linux darwin windows" -arch="amd64" -output="jocasta.."
-  -ldflags "-X main.Rev=`git rev-parse --short HEAD`" -verbose ./...; fi
+  - if [ "${LATEST}" = "true" ]; then gox -os="linux darwin windows" -arch="amd64" -output="jocasta.." -ldflags "-X main.Rev=`git rev-parse --short HEAD`" -verbose ./...; fi
 
   # push results to CodeCov
 after_success:
