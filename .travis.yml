@@ -30,3 +30,11 @@ script:
   # push results to CodeCov
 after_success:
   - bash <(curl -s https://codecov.io/bash)
+
+deploy:
+  - provider: script
+    skip_cleanup: true
+      script: curl -sL https://git.io/goreleaser | bash
+  on:
+    tags: true
+    condition: $TRAVIS_OS_NAME = linux AND $LATEST = true AND branch = master

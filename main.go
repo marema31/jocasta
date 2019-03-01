@@ -14,6 +14,13 @@ import (
 	"github.com/marema31/jocasta/logwriter"
 )
 
+// Theses variables will be provided by goreleaser via ldflags
+var (
+	version = "dev"
+	commit  = "none"
+	date    = "unknown"
+)
+
 func main() {
 
 	i := 1
@@ -27,6 +34,7 @@ func main() {
 	}
 
 	if (len(os.Args)-i) < 1 || os.Args[i] == "-h" {
+		fmt.Printf("jocasta %v, commit %v, built at %v\n\n", version, commit, date)
 		fmt.Println("usage: jocasta [-c configFileWithoutExtension] command to run with args")
 		fmt.Println()
 		fmt.Println("The config file name must be provided without the file extension, jocasta will try json, toml and yaml")
