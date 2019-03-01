@@ -17,8 +17,6 @@ before_script:
   - go get honnef.co/go/tools/cmd/staticcheck                     # Badass static analyzer/linter
   - go get github.com/fzipp/gocyclo
 
-before_install:
-  - go get github.com/mitchellh/gox
 # script always run to completion (set +e). All of these code checks are must haves
 # in a modern Go project.
 script:
@@ -28,24 +26,7 @@ script:
   - staticcheck ./...                          # "go vet on steroids" + linter
   - gocyclo -over 19 $GO_FILES               # forbid code with huge functions
   - golint -set_exit_status $(go list ./...) # one last linter
-  - if [ "${LATEST}" = "true" ]; then gox -os="linux darwin windows" -arch="amd64" -output="jocasta.." -ldflags "-X main.Rev=`git rev-parse --short HEAD`" -verbose ./...; fi
-
+  
   # push results to CodeCov
 after_success:
   - bash <(curl -s https://codecov.io/bash)
-before_deploy:
-  - git config --local user.name "Marc Carmier"
-  - git config --local user.email "marema31@gmail.com"
-  - export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)}
-#  - git tag $TRAVIS_TAG
-deploy:
-  provider: releases
-  api_key:
-    secure: h4NkA6bgf98lW2MAyLNFCwFTM7//1Ld5/YNR8XfINGKNgPPCYBoLXewmA/tONRjn6FZkphUnHcojdCZdIRW9LZa+nskFOGCt63n+p6A+BpArxCWNTazNVuh+nkrmVGKvW+Se0zgCQQwHDvyFPJPFFE2/9VG11gOHQiu/C5KSl09ffpofC4QPFQYzHTV2FZ9P9FlCfctQG6nUWg1TkdkEl0ms4l1/HU6SF21RnTEaO8JPCCfRLdUwmPONZRh1N+qtagkJpvbD2BftLS89GiHH9YJFrDp2CHYkhzHNh5a8NujCh1Qio4Jk70tObi3u3usex4y9oXN9pS+wlmSh/pfb/n0XJoZfV6U+2sp756x4+71Vk2x0rAyTiWzvj4D9dpvH1IGKsOhCZ7pZMzu8Gw7GFP9BPlJnqkHgUMPNgHn+6X6c3UI7csJV2sBuSS60rRxg83oIX5NlZEhWBOfJp8nca/IxyE5MbZ9tpnoO/hY273sQggCtvdTs5eib3G61fd28gG0qeGofyTkUu0/3wEVmXjR2w0fDeMKBG/MF/4ywU6uS1q9TLEWhYTWnEkJrrXQfeGo5AeRTAtNpRXZwEgLGR1j4MUVvYMj25F9STW5S2CibvbpOB576qKaXTF45DYh3ZFdC8npbuKxJz4mDSnHJuWyklOzWJVtdq1EKSnvjTiE=
-  file: 
-    - jocasta.linux.amd64
-    - jocasta.darwin.amd64
-    - jocasta.windowds.amd64.exe
-  skip_cleanup: true
-  on:
-    repo: marema31/jocasta
