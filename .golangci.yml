@@ -22,15 +22,5 @@ linters:
       - unused
 
 linters-settings:
-  nestif:
-    min-complexity: 6
-  gocognit:
-    min-complexity: 40
-  misspell:
-    ignore-words:
-      - creater
-      - creature
-
   funlen:
-    lines: 100
-    statements: 61
+    lines: 70
