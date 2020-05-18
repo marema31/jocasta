@@ -14,7 +14,7 @@ import (
 	"github.com/marema31/jocasta/logwriter"
 )
 
-// Theses variables will be provided by goreleaser via ldflags
+// Theses variables will be provided by goreleaser via ldflags.
 var (
 	version = "dev"
 	commit  = "none"
@@ -22,7 +22,6 @@ var (
 )
 
 func main() {
-
 	i := 1
 	configPath := "."
 	configFile := ".jocasta"
@@ -47,7 +46,8 @@ func main() {
 	}
 
 	fmt.Printf("Will run %s\n", strings.Join(os.Args[i:], " "))
-	cmd := exec.Command(os.Args[i], os.Args[i+1:]...)
+
+	cmd := exec.Command(os.Args[i], os.Args[i+1:]...) //nolint: gosec
 
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
@@ -77,7 +77,9 @@ func main() {
 	// from stdout and stderr
 	// wg ensures that we finish
 	var wg sync.WaitGroup
-	wg.Add(2)
+
+	wg.Add(2) //nolint: gomnd
+
 	go transfer(stdout, logout, &wg)
 	go transfer(stderr, logerr, &wg)
 
@@ -89,10 +91,11 @@ func main() {
 	}
 }
 
-// will be called as goroutine to allow the stdout and stderr to be captured in parallel
-func transfer(in io.ReadCloser, out io.Writer, wg *sync.WaitGroup) {
+// will be called as goroutine to allow the stdout and stderr to be captured in parallel.
+func transfer(in io.Reader, out io.Writer, wg *sync.WaitGroup) {
 	if _, err := io.Copy(out, in); err != nil {
 		log.Fatal(err)
 	}
+
 	wg.Done()
 }

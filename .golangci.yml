@@ -1,0 +1,36 @@
+run:
+  skip-dirs:
+    - doc
+    - testdata
+  tests: false
+
+linters:
+  disable:
+    - lll
+    - maligned
+    - gochecknoglobals
+    - gochecknoinits
+    - godox
+    - goconst
+    - bodyclose
+  presets:
+      - bugs
+      - complexity
+      - format
+      - performance
+      - style
+      - unused
+
+linters-settings:
+  nestif:
+    min-complexity: 6
+  gocognit:
+    min-complexity: 40
+  misspell:
+    ignore-words:
+      - creater
+      - creature
+
+  funlen:
+    lines: 100
+    statements: 61

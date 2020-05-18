@@ -1,8 +1,18 @@
 # This is an example goreleaser.yaml file with some sane defaults.
 # Make sure to check the documentation at http://goreleaser.com
+before:
+  hooks:
+    # You may remove this if you don't use go modules.
+    - go mod download
+    # you may remove this if you don't need go generate
+    # - go generate ./...
 builds:
-archive:
-  replacements:
+- env:
+  - CGO_ENABLED=0
+  ldflags:
+    -s -w -X github.com/marema31/jocasta/cmd.version={{.Version}} -X github.com/marema31/jocasta/cmd.commit={{.ShortCommit}} -X github.com/marema31/jocasta/cmd.date={{.Date}}
+archives:
+- replacements:
     darwin: Darwin
     linux: Linux
     windows: Windows
@@ -18,3 +28,12 @@ changelog:
     exclude:
     - '^docs:'
     - '^test:'
+release:
+  github:
+    owner: marema31
+    name: jocasta
+brews:
+  - github:
+      owner: marema31
+      name: homebrew-marema31
+    description: "Logger for CLI tool from standard I/O"
